@@ -1,54 +1,42 @@
 # Mellowtel Integration Guide for Electron Apps
 
-This guide provides step-by-step instructions for integrating Mellowtel monetization into any Electron application using the private npm package.
+This guide provides step-by-step instructions for integrating Mellowtel monetization into any Electron application using the public `mellowtel-electron` npm package.
 
 ## Overview
 
-Mellowtel is a consensual monetization engine for Electron applications. This guide covers integration using the private @mellowtel-inc/mellowtel-electron package from GitHub Packages.
+Mellowtel is a consensual monetization engine for Electron applications. This guide covers integration using the public `mellowtel-electron` package from npm.
 
 ## Prerequisites
 
 - Existing Electron project
 - Mellowtel API key from https://mellowtel.com
-- Access to the private @mellowtel-inc/mellowtel-electron package
 
 ## Quick File Summary
 
-1. **Copy**: `.npmrc` file from integration-agent root to Electron app root
-2. **Install**: `@mellowtel-inc/mellowtel-electron` package
-3. **Create/Modify**: `preload.js` - Add IPC communication for Mellowtel
-4. **Modify**: `main.js` (or main process file) - Add Mellowtel initialization and IPC handlers
-5. **Create/Modify**: Renderer UI - Add settings page with support toggle
+1. **Install**: `mellowtel-electron` package from npm
+2. **Create/Modify**: `preload.js` - Add IPC communication for Mellowtel
+3. **Modify**: `main.js` (or main process file) - Add Mellowtel initialization and IPC handlers
+4. **Create/Modify**: Renderer UI - Add settings page with support toggle
 
-## Step 1: Configure Private Package Access
+## Step 1: Install Mellowtel Package
 
-**Action**: Copy the `.npmrc` file from the integration-agent project root to your Electron app root directory.
-
-**Source**: `integration-agent/.npmrc`
-**Destination**: `your-electron-app/.npmrc`
-
-**Important**: 
-- The `.npmrc` file must be in the root directory of your Electron app
-
-## Step 2: Install Mellowtel Package
-
-**Action**: Install the private Mellowtel Electron package.
+**Action**: Install the Mellowtel Electron package from the public npm registry.
 
 ```bash
 # Install the package
-npm install @mellowtel-inc/mellowtel-electron
+npm install mellowtel-electron
 ```
 
 **Verification**: Check that `package.json` includes:
 ```json
 {
   "dependencies": {
-    "@mellowtel-inc/mellowtel-electron": "^x.x.x"
+    "mellowtel-electron": "^700.0.0"
   }
 }
 ```
 
-## Step 3: Create or Update Preload File
+## Step 2: Create or Update Preload File
 
 **Locate preload file**:
 - Common locations: `preload.js`, `src/preload.js`, `app/preload.js`
@@ -106,7 +94,7 @@ const mainWindow = new BrowserWindow({
 });
 ```
 
-## Step 4: Update Main Process File
+## Step 3: Update Main Process File
 
 **Locate main process file**:
 - Common locations: `main.js`, `index.js`, `src/main.js`, `app/main.js`
@@ -125,7 +113,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 // Import Mellowtel package
-const Mellowtel = require('@mellowtel-inc/mellowtel-electron');
+const Mellowtel = require('mellowtel-electron').default;
 
 // Mellowtel configuration
 const MELLOWTEL_API_KEY = 'YOUR_API_KEY'; // Replace with actual API key
@@ -173,7 +161,7 @@ app.whenReady().then(() => {
   setupIpcHandlers();
 
   // Initialize Mellowtel
-  mellowtel = new Mellowtel.default(MELLOWTEL_API_KEY, {
+  mellowtel = new Mellowtel(MELLOWTEL_API_KEY, {
     disableLogs: false, // Set to true in production
   });
 
@@ -209,7 +197,7 @@ function createWindow() {
 app.whenReady().then(() => {
   setupIpcHandlers();
 
-  mellowtel = new Mellowtel.default(MELLOWTEL_API_KEY, {
+  mellowtel = new Mellowtel(MELLOWTEL_API_KEY, {
     disableLogs: false,
   });
 
@@ -228,7 +216,7 @@ app.whenReady().then(() => {
 - Only add the three new sections: setupIpcHandlers(), mellowtel initialization, and init check
 - Keep all existing window creation and app setup code unchanged
 
-## Step 5: Update Renderer UI
+## Step 4: Update Renderer UI
 
 **Goal**: Add a settings page with a "Support Developer" toggle that follows your app's theme.
 
